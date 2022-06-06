@@ -12,9 +12,10 @@ CancellationToken<T> runCancellable<T>(
   Future<T> Function() operation,
 ) {
   final token = CancellationToken<T>();
-  runZonedGuarded(
-    () => operation().then(token._resultCompleter.complete),
-    token._resultCompleter.completeError,
+  runZoned(
+    () => operation()
+        .then(token._resultCompleter.complete)
+        .catchError(token._resultCompleter.completeError),
     zoneValues: {_key: token},
   );
 
